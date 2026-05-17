@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoxyAI Tools Hub | Future of AI</title>
+    <!-- Google Fonts for Premium Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Dark Theme (Default) */
+            --bg-body: #050508;
+            --bg-cards: rgba(15, 15, 25, 0.7);
+            --accent-primary: #6366f1; /* Indigo Neon */
+            --accent-secondary: #a855f7; /* Purple Neon */
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --nav-bg: rgba(5, 5, 8, 0.8);
+            --card-glow: rgba(99, 102, 241, 0.2);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f8fafc;
+            --bg-cards: rgba(255, 255, 255, 0.8);
+            --accent-primary: #4f46e5;
+            --accent-secondary: #7c3aed;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --glass-border: rgba(0, 0, 0, 0.05);
+            --nav-bg: rgba(248, 250, 252, 0.8);
+            --card-glow: rgba(79, 70, 229, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: background-color 0.5s ease;
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(var(--accent-primary), var(--accent-secondary)); 
+            border-radius: 10px;
+        }
+
+        /* --- Loading Screen --- */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        .loader-ring {
+            width: 80px;
+            height: 80px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .loader-text {
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            color: #fff;
+        }
+
+        /* --- Background Particles --- */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* --- Navbar --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(15px);
+            background: var(--nav-bg);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            opacity: 0.8;
+        }
+
+        .nav-links a:hover { opacity: 1; color: var(--accent-primary); }
+
+        .theme-toggle {
+            cursor: pointer;
+            background: var(--glass-border);
+            border: none;
+            padding: 10px;
+            border-radius: 12px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Hero Section --- */
+        #home {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 10%;
+            position: relative;
+        }
+
+        .hero-badge {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--accent-primary);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+            margin-bottom: 2rem;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            max-width: 900px;
+        }
+
+        .hero-title span {
+            background: linear-gradient(to right, var(--accent-primary), #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+            box-shadow: 0 10px 20px var(--card-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px var(--card-glow);
+            filter: brightness(1.1);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: var(--glass-border);
+        }
+
+        /* --- Search & Filters --- */
+        #tools { padding: 100px 5%; }
+
+        .search-container {
+            max-width: 700px;
+            margin: 0 auto 4rem;
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 20px 30px 20px 60px;
+            background: var(--bg-cards);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            outline: none;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .search-bar:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 30px var(--card-glow);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* --- Categories --- */
+        .category-scroll {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .cat-btn {
+            padding: 8px 20px;
+            border-radius: 10px;
+            background: var(--bg-cards);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .cat-btn.active, .cat-btn:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        /* --- Tool Cards --- */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .tool-card {
+            background: var(--bg-cards);
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 24px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, transparent, var(--card-glow), transparent);
+            transform: translateX(-100%);
+            transition: 0.6s;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .tool-card:hover::before { transform: translateX(100%); }
+
+        .tool-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--glass-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .tool-link {
+            text-decoration: none;
+            color: var(--accent-primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* --- Features & Contact Sections --- */
+        section { padding: 100px 5%; }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-header h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--bg-cards);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        #contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--bg-cards);
+            padding: 3rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 80px 5% 40px;
+            background: var(--nav-bg);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 4rem;
+            margin-bottom: 4rem;
+        }
+
+        .footer-logo-desc p {
+            color: var(--text-muted);
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .footer-links h4 { margin-bottom: 1.5rem; font-size: 1.1rem; }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 0.8rem; }
+        .footer-links a { 
+            text-decoration: none; color: var(--text-muted); 
+            font-size: 0.9rem; transition: var(--transition);
+        }
+        .footer-links a:hover { color: var(--accent-primary); padding-left: 5px; }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Mobile Responsive --- */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.8rem; }
+            .nav-links { display: none; }
+            .hero-btns { flex-direction: column; width: 100%; }
+            .hero-btns .btn { width: 100%; }
+            .tools-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cinematic Loader -->
+    <div id="loader">
+        <div class="loader-ring"></div>
+        <div class="loader-text" id="loader-status">Initializing AI Experience...</div>
+    </div>
+
+    <!-- Animated Canvas Background -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Sticky Navbar -->
+    <nav>
+        <div class="logo">NoxyAI Hub</div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#tools">AI Tools</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <button class="theme-toggle" id="theme-btn" title="Toggle Theme">
+            <svg id="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <svg id="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home">
+        <div class="hero-badge">The Ultimate AI Directory 2026</div>
+        <h1 class="hero-title">Experience the Power of <span>Artificial Intelligence</span></h1>
+        <p class="hero-subtitle">Discover, compare, and master the world's most advanced AI tools in one premium curated workspace.</p>
+        <div class="hero-btns">
+            <a href="#tools" class="btn btn-primary">Explore Tools</a>
+            <a href="#about" class="btn btn-secondary">Learn More</a>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section id="tools">
+        <div class="section-header reveal">
+            <h2>AI Tools Directory</h2>
+            <p>Search through our high-performance tool database</p>
+        </div>
+
+        <div class="search-container reveal">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-bar" id="tool-search" placeholder="Search for AI tools (e.g. ChatGPT, Canva)...">
+        </div>
+
+        <div class="category-scroll reveal">
+            <button class="cat-btn active" onclick="filterTools('all')">All Tools</button>
+            <button class="cat-btn" onclick="filterTools('Chatbots')">Chatbots</button>
+            <button class="cat-btn" onclick="filterTools('Design')">Design</button>
+            <button class="cat-btn" onclick="filterTools('Dev')">Developer</button>
+            <button class="cat-btn" onclick="filterTools('Productivity')">Productivity</button>
+            <button class="cat-btn" onclick="filterTools('Learning')">Learning</button>
+        </div>
+
+        <div class="tools-grid" id="tools-container">
+            <!-- Tools will be injected by JavaScript -->
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="section-header reveal">
+            <h2>Platform Features</h2>
+            <p>Why choose NoxyAI for your workflow</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card reveal">
+                <i>⚡</i>
+                <h3>Lightning Fast</h3>
+                <p>Instant search and filtering for thousands of AI tools.</p>
+            </div>
+            <div class="feature-card reveal">
+                <i>🎯</i>
+                <h3>Curated Content</h3>
+                <p>Only the highest quality AI platforms make the cut.</p>
+            </div>
+            <div class="feature-card reveal">
+                <i>🌓</i>
+                <h3>Adaptive UI</h3>
+                <p>Beautiful dark and light modes for any environment.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="section-header reveal">
+            <h2>About NoxyAI</h2>
+        </div>
+        <div style="max-width: 800px; margin: 0 auto; text-align: center; color: var(--text-muted); line-height: 1.8;" class="reveal">
+            <p>NoxyAI Tools Hub is a futuristic premium AI tools platform designed to help creators, developers, students, and businesses access the world’s best AI tools in one place. We believe in bridging the gap between human creativity and machine intelligence by providing a seamless, luxury interface to the digital frontier.</p>
+        </div>
+    </section>
+
+   <!-- Contact Section -->
+<section id="contact">
+    <div class="section-header reveal">
+        <h2>Get in Touch</h2>
+        <p>Have questions or want to list your AI tool?</p>
+    </div>
+    <form id="contact-form" class="reveal">
+        <div class="form-group">
+            <label>Full Name</label>
+            <!-- Added id="name" and required attribute -->
+            <input type="text" id="name" class="form-control" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+            <label>Email Address</label>
+            <!-- Added id="email" and required attribute -->
+            <input type="email" id="email" class="form-control" placeholder="john@example.com" required>
+        </div>
+        <div class="form-group">
+            <label>Message</label>
+            <!-- Added id="message" and required attribute -->
+            <textarea id="message" class="form-control" rows="5" placeholder="How can we help you?" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+    </form>
+</section>
+
+<!-- WhatsApp Redirection Script -->
+<script>
+document.getElementById('contact-form').addEventListener('submit', function(e) {
+    // 1. Prevent the default browser form submission
+    e.preventDefault(); 
+
+    // 2. Capture the input values
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const message = document.getElementById('message').value;
+
+    // 3. Define target phone number (Format: country code + number without spaces or "+")
+    const phoneNumber = "917829671246";
+
+    // 4. Format the message layout (using * text * for bold styling in WhatsApp)
+    const textMessage = `*New Inquiry From Website*\n\n` +
+                        `*Name:* ${name}\n` +
+                        `*Email:* ${email}\n` +
+                        `*Message:* ${message}`;
+
+    // 5. URL encode the message text safely
+    const encodedText = encodeURIComponent(textMessage);
+
+    // 6. Construct the official WhatsApp API URL
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedText}`;
+
+    // 7. Open the WhatsApp link in a new browser tab
+    window.open(whatsappUrl, '_blank');
+});
+</script>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo-desc">
+                <div class="logo">NoxyAI Hub</div>
+                <p>Elevating your workflow with the next generation of artificial intelligence directory services.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Platform</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#tools">Directory</a></li>
+                    <li><a href="#features">Features</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 NoxyAI Tools Hub. Designed for the Future.
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * 1. TOOL DATA DATABASE
+         */
+        const aiTools = [
+            { name: "ChatGPT", cat: "Chatbots", desc: "The world's leading conversational AI by OpenAI.", link: "https://chat.openai.com", icon: "🤖" },
+            { name: "Gemini", cat: "Chatbots", desc: "Google's most capable and versatile AI model.", link: "https://gemini.google.com", icon: "💎" },
+            { name: "Perplexity", cat: "Chatbots", desc: "AI-powered search engine for instant answers.", link: "https://www.perplexity.ai", icon: "🔍" },
+            { name: "Claude AI", cat: "Chatbots", desc: "Next-gen AI assistant by Anthropic.", link: "https://claude.ai", icon: "🧠" },
+            { name: "Grok", cat: "Chatbots", desc: "xAI's witty and real-time knowledge assistant.", link: "https://grok.x.ai", icon: "✖️" },
+            { name: "Microsoft Copilot", cat: "Productivity", desc: "Your everyday AI companion for Windows.", link: "https://copilot.microsoft.com", icon: "💻" },
+            { name: "Gamma", cat: "Design", desc: "Create presentations and sites in seconds.", link: "https://gamma.app", icon: "🪄" },
+            { name: "Canva", cat: "Design", desc: "Design anything with AI-powered tools.", link: "https://www.canva.com", icon: "🎨" },
+            { name: "Photopea", cat: "Design", desc: "Advanced online image editor (Photoshop alternative).", link: "https://www.photopea.com", icon: "🖼️" },
+            { name: "GitHub Copilot", cat: "Dev", desc: "AI pair programmer for faster coding.", link: "https://github.com/features/copilot", icon: "🚀" },
+            { name: "Blackbox AI", cat: "Dev", desc: "Real-time AI coding assistant and search.", link: "https://www.blackbox.ai", icon: "📦" },
+            { name: "Bolt.new", cat: "Dev", desc: "Prompt-to-stack web development platform.", link: "https://bolt.new", icon: "⚡" },
+            { name: "Netlify", cat: "Dev", desc: "Deploy modern web projects instantly.", link: "https://www.netlify.com", icon: "🌐" },
+            { name: "Coursera", cat: "Learning", desc: "Online courses from top universities.", link: "https://www.coursera.org", icon: "🎓" },
+            { name: "Udemy", cat: "Learning", desc: "Largest selection of online video courses.", link: "https://www.udemy.com", icon: "📚" },
+            { name: "Infosys Springboard", cat: "Learning", desc: "Digital literacy and professional learning.", link: "https://infyspringboard.onwingspan.com", icon: "🌱" },
+            { name: "MS Word", cat: "Office", desc: "Industry standard word processing.", link: "https://www.microsoft.com/microsoft-365/word", icon: "📝" },
+            { name: "MS Excel", cat: "Office", desc: "Powerful data analysis and spreadsheets.", link: "https://www.microsoft.com/microsoft-365/excel", icon: "📊" },
+            { name: "Gmail", cat: "Productivity", desc: "Secure and smart email service.", link: "https://mail.google.com", icon: "📧" },
+            { name: "Google Meet", cat: "Communication", desc: "Premium video meetings for everyone.", link: "https://meet.google.com", icon: "📹" },
+            { name: "WhatsApp Web", cat: "Communication", desc: "Secure messaging on your computer.", link: "https://web.whatsapp.com", icon: "💬" },
+            { name: "YouTube", cat: "Learning", desc: "The world's largest video sharing platform.", link: "https://www.youtube.com", icon: "📽️" },
+            { name: "LinkedIn", cat: "Productivity", desc: "Professional networking and career growth.", link: "https://www.linkedin.com", icon: "👔" },
+            { name: "Cloudflare", cat: "Dev", desc: "Web performance and security powerhouse.", link: "https://www.cloudflare.com", icon: "☁️" }
+        ];
+
+        /**
+         * 2. LOADING SCREEN LOGIC
+         */
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            const status = document.getElementById('loader-status');
+            
+            setTimeout(() => { status.innerText = "Synchronizing Data..."; }, 1000);
+            setTimeout(() => { status.innerText = "Launching NoxyAI..."; }, 2000);
+            
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+            }, 3000);
+            
+            renderTools(aiTools);
+        });
+
+        /**
+         * 3. RENDER TOOLS
+         */
+        function renderTools(tools) {
+            const container = document.getElementById('tools-container');
+            container.innerHTML = '';
+            
+            tools.forEach(tool => {
+                const card = document.createElement('div');
+                card.className = 'tool-card reveal active';
+                card.innerHTML = `
+                    <div class="tool-icon">${tool.icon}</div>
+                    <h3 class="tool-name">${tool.name}</h3>
+                    <p class="tool-desc">${tool.desc}</p>
+                    <a href="${tool.link}" target="_blank" class="tool-link">Open Platform ↗</a>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        /**
+         * 4. SEARCH & FILTER LOGIC
+         */
+        document.getElementById('tool-search').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = aiTools.filter(t => 
+                t.name.toLowerCase().includes(term) || 
+                t.desc.toLowerCase().includes(term)
+            );
+            renderTools(filtered);
+        });
+
+        function filterTools(category) {
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if(category === 'all') {
+                renderTools(aiTools);
+            } else {
+                const filtered = aiTools.filter(t => t.cat.includes(category));
+                renderTools(filtered);
+            }
+        }
+
+        /**
+         * 5. DARK/LIGHT MODE TOGGLE
+         */
+        const themeBtn = document.getElementById('theme-btn');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+
+        themeBtn.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const targetTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', targetTheme);
+            localStorage.setItem('theme', targetTheme);
+            
+            if(targetTheme === 'light') {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            }
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        /**
+         * 6. PARTICLE BACKGROUND SYSTEM
+         */
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < 80; i++) particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+        initParticles();
+        animate();
+
+        /**
+         * 7. SCROLL REVEAL ANIMATION
+         */
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    </script>
+</body>
+</html>
